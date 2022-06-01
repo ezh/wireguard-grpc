@@ -7,6 +7,7 @@ import (
 	"github.com/rs/zerolog"
 )
 
+// New creates Zerolog logger
 func New(logLevel int, options ...logger.Option) (error, logr.Logger) {
 	lo := logger.Get(options...)
 	zl := zerolog.New(lo.Output)

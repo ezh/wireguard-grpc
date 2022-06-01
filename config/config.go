@@ -9,7 +9,8 @@ import (
 )
 
 type Config struct {
-	WgExecutable string `yaml:"wg_exe" env:"WG_EXE" env-default:"wg" env-description:"wireguard executable file location"`
+	LogLevel     string `yaml:"loglevel" env:"LOG_LEVEL" env-description:"application log level"`
+	WgExecutable string `yaml:"wg_exe" env:"WG_EXE" env-default:"wg" env-description:"wireguard executable file"`
 }
 
 // ReadConfig reads configuration
