@@ -24,7 +24,7 @@ func NewTestCore(buf *bytes.Buffer) zapcore.Core {
 var _ = Describe("Zap", func() {
 	It("should produce log message", func() {
 		logFile := new(bytes.Buffer)
-		err, logr := zap.New(0, logger.WithOutput(logFile))
+		logr, err := zap.New(0, logger.WithOutput(logFile))
 		Expect(err).To(Succeed())
 		logr.Info("zap message", "string", "details", "number", 1)
 		Expect(logFile.String()).To(ContainSubstring(",\"M\":\"zap message\",\"string\":\"details\",\"number\":1}\n"))

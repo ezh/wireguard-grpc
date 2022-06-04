@@ -29,7 +29,7 @@ func NewConfigEnvCommand(c Config) *cobra.Command {
 		Short: "Prints environment variables.",
 		Run: func(*cobra.Command, []string) {
 			help, _ := cleanenv.GetDescription(&Config{}, nil)
-			fmt.Println(help)
+			fmt.Println(help) // nolint:forbidigo
 		},
 	}
 }

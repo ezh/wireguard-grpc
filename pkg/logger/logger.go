@@ -9,17 +9,17 @@ import (
 // verbosity level
 type LogLevel int
 
-type LogBuilder func(logLevel LogLevel, options ...Option) (error, logr.Logger)
+type LogBuilder func(logLevel LogLevel, options ...Option) (logr.Logger, error)
 
 const (
 	// logging is disabled
-	LOG_OFF LogLevel = iota - 1
+	LogOff LogLevel = iota - 1
 	// logging channel for general information
-	LOG_INFO
+	LogInfo
 	// logging channel for detailed information
-	LOG_DEBUG
+	LogDebug
 	// logging channel for verbose information about the current state
-	LOG_TRACE
+	LogTrace
 )
 
 // ParseLogLevel convert the string representation into an instance of log level.
@@ -29,19 +29,19 @@ func ParseLogLevel(value string) LogLevel {
 	case "trace":
 		fallthrough
 	case "spam":
-		return LOG_TRACE
+		return LogTrace
 
 	case "insight":
 		fallthrough
 	case "debug":
-		return LOG_DEBUG
+		return LogDebug
 
 	case "info":
 		fallthrough
 	case "information":
 		fallthrough
 	case "informative":
-		return LOG_INFO
+		return LogInfo
 
 	default:
 		return 0

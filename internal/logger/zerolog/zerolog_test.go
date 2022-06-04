@@ -13,9 +13,10 @@ import (
 var _ = Describe("Zerolog", func() {
 	It("should produce log message", func() {
 		logFile := new(bytes.Buffer)
-		err, logr := zerolog.New(0, logger.WithOutput(logFile))
+		logr, err := zerolog.New(0, logger.WithOutput(logFile))
 		Expect(err).To(Succeed())
 		logr.Info("zero message", "string", "details", "number", 1)
-		Expect(logFile.String()).To(Equal("{\"level\":\"info\",\"v\":0,\"string\":\"details\",\"number\":1,\"message\":\"zero message\"}\n"))
+		Expect(logFile.String()).
+			To(Equal("{\"level\":\"info\",\"v\":0,\"string\":\"details\",\"number\":1,\"message\":\"zero message\"}\n"))
 	})
 })

@@ -8,8 +8,8 @@ import (
 )
 
 // New creates Zerolog logger
-func New(logLevel int, options ...logger.Option) (error, logr.Logger) {
+func New(logLevel int, options ...logger.Option) (logr.Logger, error) {
 	lo := logger.Get(options...)
 	zl := zerolog.New(lo.Output)
-	return nil, zerologr.New(&zl).V(logLevel)
+	return zerologr.New(&zl).V(logLevel), nil
 }

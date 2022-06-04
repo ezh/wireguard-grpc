@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package wireguard.v1;
+
+import "google/protobuf/empty.proto";
+
+service WireGuardService {
+  rpc Ping(google.protobuf.Empty) returns (google.protobuf.Empty);
+}

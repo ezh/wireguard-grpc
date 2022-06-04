@@ -9,19 +9,21 @@ import (
 )
 
 // New creates Zap logger
-func New(logLevel logger.LogLevel, options ...logger.Option) (error, logr.Logger) {
+func New(logLevel logger.LogLevel, options ...logger.Option) (logr.Logger, error) {
 	lo := logger.Get(options...)
 	config := zap.NewDevelopmentConfig()
 	switch logLevel {
-	case logger.LOG_INFO:
+	case logger.LogInfo:
 		config.Level = zap.NewAtomicLevelAt(zap.InfoLevel)
-	case logger.LOG_DEBUG:
+	case logger.LogDebug:
 		config.Level = zap.NewAtomicLevelAt(zap.DebugLevel)
-	default:
+	case logger.LogTrace:
 		config.Level = zap.NewAtomicLevelAt(-127)
+	case logger.LogOff:
+		config.Level = zap.NewAtomicLevelAt(zap.PanicLevel)
 	}
 	core := zapcore.NewCore(zapcore.NewJSONEncoder(config.EncoderConfig),
 		zapcore.AddSync(lo.Output), config.Level)
 	zapLog := zap.New(core, lo.ZapOptions...)
-	return nil, zapr.NewLogger(zapLog)
+	return zapr.NewLogger(zapLog), nil
 }
