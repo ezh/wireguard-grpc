@@ -21,11 +21,13 @@ func (t *tHelper) Helper()      {}
 func (t *tHelper) Name() string { return "wireguard-grpc-test" }
 
 // NewTest creates a new test harness to more easily run integration tests against the provided Kubernetes cluster.
-func NewTest(kubeconfigPath ...string) (*harness.Test, error) {
+func NewTest(logLevel logger.LogLevel, kubeconfigPath ...string) (*harness.Test, error) {
 	t := &tHelper{ginkgo.GinkgoT()}
 	l := &logger.TestLogger{}
+	l.SetLevel(logLevel)
 	h := harness.New(harness.Options{
 		Logger:            l.ForTest(t),
+		LogLevel:          logLevel,
 		ManifestDirectory: path.Join(utilities.TestGetRoot(), "data"),
 	})
 	if err := h.Setup(); err != nil {
@@ -37,6 +39,8 @@ func NewTest(kubeconfigPath ...string) (*harness.Test, error) {
 	}
 	test := h.NewTest(t)
 	test.Setup()
-	fmt.Fprintf(ginkgo.GinkgoWriter, "using namespace %s\n", test.Namespace)
+	if logLevel == logger.Debug {
+		fmt.Fprintf(ginkgo.GinkgoWriter, "using namespace %s\n", test.Namespace)
+	}
 	return test, nil
 }

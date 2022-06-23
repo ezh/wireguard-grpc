@@ -12,5 +12,5 @@ import (
 
 func TestP2p(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "P2p Suite")
+	RunSpecs(t, "P2P Suite")
 }

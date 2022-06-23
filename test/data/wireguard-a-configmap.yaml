@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: wireguard-a
+data:
+  wireguard.conf: |
+    [Interface]
+    Address = 10.255.255.1/24
+    ListenPort = 51820
+    PrivateKey = KOnxWiTPGxFW9AFBCI0NSLDTuZtmYNSKoM5Tb4auvlc=
+    PostUp = iptables -A FORWARD -i %i -j ACCEPT; iptables -A FORWARD -o %i -j ACCEPT; iptables -t nat -A POSTROUTING -o eth+ -j MASQUERADE
+    PostDown = iptables -D FORWARD -i %i -j ACCEPT; iptables -D FORWARD -o %i -j ACCEPT; iptables -t nat -D POSTROUTING -o eth+ -j MASQUERADE
+
+    [Peer]
+    PublicKey = GQ+LsM9LFtXYXv+tVXWwWVa2QPexzrEekABPvgKUHRE=
+    AllowedIPs = 10.255.255.2/32
+    PersistentKeepalive = 5
