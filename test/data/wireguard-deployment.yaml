@@ -1,0 +1,60 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wireguard
+  labels:
+    app: wireguard
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wireguard
+  template:
+    metadata:
+      labels:
+        app: wireguard
+    spec:
+      containers:
+        - name: wireguard
+          image: linuxserver/wireguard:latest
+          env:
+            - name: TZ
+              value: America/Central
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+            - name: SERVERURL
+              value: "10.20.30.40" # change this
+            # - name: SERVERPORT
+            #   value: "31820"
+            - name: PEERS
+              value: "1"
+            - name: PEERSDNS
+              value: auto
+            - name: INTERNAL_SUBNET
+              value: 10.0.0.0
+            - name: ALLOWEDIPS
+              value: 0.0.0.0/0
+          ports:
+            - containerPort: 51820
+              hostPort: 51820
+              protocol: UDP
+          securityContext:
+            capabilities:
+              add: ["NET_ADMIN", "SYS_MODULE"]
+          # volumeMounts:
+            # - name: wireguard-config
+            #   mountPath: /config
+            # - name: modules
+              # mountPath: /lib/modules
+          resources: {}
+      # volumes:
+        # - name: vpn-conf
+        #   persistentVolumeClaim:
+        #     claimName: wireguard
+        # - name: modules
+        #   hostPath:
+        #     path: /lib/modules # the wireguard kernel modules are required on every node, however alpine has those
+        #     type: Directory
