@@ -2,13 +2,32 @@ package exec
 
 import (
 	"bytes"
+	"fmt"
 	"os/exec"
 	"strings"
 )
 
+type Executor interface {
+	Run(args ...string) (string, string, error)
+	RunCombined(args ...string) (string, error)
+}
+
 type Executable struct {
-	Cmd  string
-	Sudo bool
+	Cmd     string
+	CmdArgs []string
+}
+
+var _ Executor = (*Executable)(nil)
+
+func New(rawCmd string) Executable {
+	args := strings.Fields(rawCmd)
+	if len(args) == 0 {
+		panic(fmt.Errorf("unable to create Executable for '%s'", rawCmd))
+	}
+	return Executable{
+		Cmd:     args[0],
+		CmdArgs: args[1:],
+	}
 }
 
 func (exe *Executable) Run(args ...string) (string, string, error) {
@@ -27,14 +46,10 @@ func (exe *Executable) RunCombined(args ...string) (string, error) {
 func (exe *Executable) run(stdout, stderr *bytes.Buffer, args ...string) error {
 	var cmd *exec.Cmd
 
-	if exe.Sudo {
-		argsForSudo := make([]string, len(args)+1)
-		argsForSudo[0] = exe.Cmd
-		copy(argsForSudo[1:], args)
-		cmd = exec.Command("sudo", argsForSudo...) // #nosec G204
-	} else {
-		cmd = exec.Command(exe.Cmd, args...) // #nosec G204
-	}
+	argsForCmd := make([]string, len(exe.CmdArgs)+len(args))
+	copy(argsForCmd, exe.CmdArgs)
+	copy(argsForCmd[len(exe.CmdArgs):], args)
+	cmd = exec.Command(exe.Cmd, argsForCmd...) // #nosec G204
 	cmd.Stdout = stdout
 	cmd.Stderr = stderr
 	err := cmd.Run()

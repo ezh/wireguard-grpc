@@ -9,6 +9,10 @@ type Exec struct {
 	exec.Executable
 }
 
+func New(rawCmd string) *Exec {
+	return &Exec{Executable: exec.New(rawCmd)}
+}
+
 func (exe *Exec) Verify(l *logr.Logger) bool {
 	out, err := exe.RunCombined("show")
 	if err != nil {
@@ -16,4 +20,8 @@ func (exe *Exec) Verify(l *logr.Logger) bool {
 		return false
 	}
 	return true
+}
+
+func (exe *Exec) Version(l *logr.Logger) (string, error) {
+	return "", nil
 }

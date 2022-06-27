@@ -10,8 +10,8 @@ import (
 )
 
 type GRPC struct {
-	WG      wg.Exec
-	WGQuick wgquick.Exec
+	WG      *wg.Exec
+	WGQuick *wgquick.Exec
 	wireguardv1.UnimplementedWireGuardServiceServer
 }
 

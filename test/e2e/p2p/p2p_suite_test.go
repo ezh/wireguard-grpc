@@ -4,6 +4,7 @@
 package p2p_test
 
 import (
+	"fmt"
 	"os/exec"
 	"strings"
 	"testing"
@@ -18,12 +19,15 @@ import (
 )
 
 const (
+	// Keep K8S namespace and gexec.Build artifact, dump K8S objects
+	DEBUG             = false
 	executableTimeout = 10 * time.Second
 )
 
 var kubeTest *kube.TestEx
 var podA v1.Pod
 var podB v1.Pod
+var pathToCLI string
 
 func podCmd(pod v1.Pod, cmd string) *exec.Cmd {
 	var args []string
@@ -76,10 +80,15 @@ var _ = BeforeSuite(func() {
 	pingB2s, err := gexec.Start(pingB2, GinkgoWriter, GinkgoWriter)
 	Expect(err).To(Succeed())
 	Eventually(pingB2s, executableTimeout).Should(gexec.Exit(0))
+	By("environment is ready")
+
+	pathToCLI, err = gexec.Build("github.com/ezh/wireguard-grpc/cmd", "-race")
+	Expect(err).ShouldNot(HaveOccurred())
+	By(fmt.Sprintf("CLI is ready at %s", pathToCLI))
 })
 
 var _ = AfterEach(func() {
-	if CurrentSpecReport().Failed() {
+	if DEBUG && CurrentSpecReport().Failed() {
 		kubeTest.Fail()
 	}
 })
@@ -87,6 +96,11 @@ var _ = AfterEach(func() {
 var _ = AfterSuite(func() {
 	if kubeTest != nil {
 		kubeTest.Close()
+	}
+	gexec.KillAndWait()
+	// Debug github.com/ezh/wireguard-grpc/cmd
+	if !DEBUG && (kubeTest == nil || !kubeTest.Failed()) {
+		gexec.CleanupBuildArtifacts()
 	}
 })
 

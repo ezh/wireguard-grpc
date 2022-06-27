@@ -47,3 +47,13 @@ func ParseLogLevel(value string) LogLevel {
 		return 0
 	}
 }
+
+func NewLogger(logBuilder LogBuilder, rawLogLevel string, verbosity int) (logr.Logger, error) {
+	if verbosity == -1 {
+		logBuilder = func(logLevel LogLevel, options ...Option) (logr.Logger, error) {
+			return logr.Discard(), nil
+		}
+	}
+	logLevel := ParseLogLevel(rawLogLevel)
+	return logBuilder(LogLevel(int(logLevel) + verbosity))
+}
