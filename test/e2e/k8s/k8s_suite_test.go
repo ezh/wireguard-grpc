@@ -4,7 +4,6 @@
 package p2p_test
 
 import (
-	"fmt"
 	"os/exec"
 	"strings"
 	"testing"
@@ -22,12 +21,12 @@ const (
 	// Keep K8S namespace and gexec.Build artifact, dump K8S objects
 	DEBUG             = false
 	executableTimeout = 10 * time.Second
+	pollingInterval   = time.Second / 2
 )
 
 var kubeTest *kube.TestEx
 var podA v1.Pod
 var podB v1.Pod
-var pathToCLI string
 
 func podCmd(pod v1.Pod, cmd string) *exec.Cmd {
 	var args []string
@@ -46,11 +45,12 @@ var _ = BeforeSuite(func() {
 	kubeTest.CreateConfigMapFromFile(kubeTest.Namespace, "wireguard-a-configmap.yaml")
 	kubeTest.CreateServiceFromFile(kubeTest.Namespace, "wireguard-a-service.yaml")
 	kubeTest.CreateDeployment(kubeTest.Namespace, wgA)
-	kubeTest.WaitForDeploymentReady(wgA, 10*time.Minute)
 
 	wgB := kubeTest.LoadDeployment("wireguard-b-deployment.yaml")
 	kubeTest.CreateConfigMapFromFile(kubeTest.Namespace, "wireguard-b-configmap.yaml")
 	kubeTest.CreateDeployment(kubeTest.Namespace, wgB)
+
+	kubeTest.WaitForDeploymentReady(wgA, 10*time.Minute)
 	kubeTest.WaitForDeploymentReady(wgB, 10*time.Minute)
 
 	podsA := kubeTest.ListPodsFromDeployment(wgA)
@@ -61,30 +61,31 @@ var _ = BeforeSuite(func() {
 	podA = podsA.Items[0]
 	podB = podsB.Items[0]
 
-	// Ping in pod A
-	pingA1 := podCmd(podA, "ping -c 1 10.255.255.1")
-	pingA1s, err := gexec.Start(pingA1, GinkgoWriter, GinkgoWriter)
-	Expect(err).To(Succeed())
-	Eventually(pingA1s, executableTimeout).Should(gexec.Exit(0))
-	pingA2 := podCmd(podA, "ping -c 1 10.255.255.2")
-	pingA2s, err := gexec.Start(pingA2, GinkgoWriter, GinkgoWriter)
-	Expect(err).To(Succeed())
-	Eventually(pingA2s, executableTimeout).Should(gexec.Exit(0))
-
-	// Ping in pod B
-	pingB1 := podCmd(podB, "ping -c 1 10.255.255.1")
-	pingB1s, err := gexec.Start(pingB1, GinkgoWriter, GinkgoWriter)
-	Expect(err).To(Succeed())
-	Eventually(pingB1s, executableTimeout).Should(gexec.Exit(0))
-	pingB2 := podCmd(podB, "ping -c 1 10.255.255.2")
-	pingB2s, err := gexec.Start(pingB2, GinkgoWriter, GinkgoWriter)
-	Expect(err).To(Succeed())
-	Eventually(pingB2s, executableTimeout).Should(gexec.Exit(0))
 	By("environment is ready")
+	Eventually(func() error {
+		return InterceptGomegaFailure(func() {
+			// Ping in pod A
+			pingA1 := podCmd(podA, "ping -c 1 -i 0.1 10.255.255.1")
+			pingA1s, err := gexec.Start(pingA1, GinkgoWriter, GinkgoWriter)
+			Expect(err).To(Succeed())
+			pingA2 := podCmd(podA, "ping -c 1 -i 0.1 10.255.255.2")
+			pingA2s, err := gexec.Start(pingA2, GinkgoWriter, GinkgoWriter)
+			Expect(err).To(Succeed())
 
-	pathToCLI, err = gexec.Build("github.com/ezh/wireguard-grpc/cmd", "-race")
-	Expect(err).ShouldNot(HaveOccurred())
-	By(fmt.Sprintf("CLI is ready at %s", pathToCLI))
+			// Ping in pod B
+			pingB1 := podCmd(podB, "ping -c 1 10.255.255.1")
+			pingB1s, err := gexec.Start(pingB1, GinkgoWriter, GinkgoWriter)
+			Expect(err).To(Succeed())
+			pingB2 := podCmd(podB, "ping -c 1 10.255.255.2")
+			pingB2s, err := gexec.Start(pingB2, GinkgoWriter, GinkgoWriter)
+			Expect(err).To(Succeed())
+
+			Eventually(pingA1s).Should(gexec.Exit(0))
+			Eventually(pingA2s).Should(gexec.Exit(0))
+			Eventually(pingB1s).Should(gexec.Exit(0))
+			Eventually(pingB2s).Should(gexec.Exit(0))
+		})
+	}, executableTimeout, pollingInterval).Should(Succeed())
 })
 
 var _ = AfterEach(func() {

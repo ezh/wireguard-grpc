@@ -1,7 +1,4 @@
-//go:build integration
-// +build integration
-
-package p2p_test
+package local_test
 
 import (
 	"bytes"
@@ -14,8 +11,8 @@ import (
 	"github.com/onsi/gomega/gexec"
 )
 
-var _ = Describe("P2P", func() {
-	It("Test -h", func() {
+var _ = Describe("Run Local Integration Tests", func() {
+	It("Test CLI -h", func() {
 		var stderr, stdout bytes.Buffer
 		command := exec.Command(pathToCLI, "-h")
 		session, err := gexec.Start(command, &stdout, &stderr)
@@ -25,16 +22,14 @@ var _ = Describe("P2P", func() {
 		Expect(stderr.String()).To(BeEmpty())
 		Expect(stdout.String()).To(ContainSubstring("wireguard-grpc is a wireguard GRPC API"))
 	})
-	FIt("Test API behavior 2", func() {
+
+	It("Test CLI diag with broken wg", func() {
 		var stderr, stdout bytes.Buffer
-		command := exec.Command(pathToCLI, "-h")
+		command := exec.Command(pathToCLI, "diag")
 		command.Env = os.Environ()
 		command.Env = append(command.Env, "WG_EXE=false")
 		session, err := gexec.Start(command, &stdout, &stderr)
 		Expect(err).ShouldNot(HaveOccurred())
-		Eventually(session, executableTimeout).Should(gexec.Exit(0))
-	})
-	It("Test API behavior 3", func() {
-		Expect(false).To(BeTrue())
+		Eventually(session, executableTimeout).Should(gexec.Exit(1))
 	})
 })
