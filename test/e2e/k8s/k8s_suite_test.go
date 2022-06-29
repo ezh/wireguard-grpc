@@ -4,6 +4,7 @@
 package p2p_test
 
 import (
+	"fmt"
 	"os/exec"
 	"strings"
 	"testing"
@@ -25,6 +26,7 @@ const (
 )
 
 var kubeTest *kube.TestEx
+var pathToCLI string
 var podA v1.Pod
 var podB v1.Pod
 
@@ -33,6 +35,10 @@ func podCmd(pod v1.Pod, cmd string) *exec.Cmd {
 	args = append(args, "exec", "-n", kubeTest.Namespace, pod.Name, "--")
 	args = append(args, strings.Fields(cmd)...)
 	return exec.Command("kubectl", args...)
+}
+
+func getPodCmd(pod v1.Pod, cmd string) string {
+	return fmt.Sprintf("kubectl exec -n %s %s -- %s", kubeTest.Namespace, pod.Name, cmd)
 }
 
 var _ = BeforeSuite(func() {
@@ -62,6 +68,8 @@ var _ = BeforeSuite(func() {
 	podB = podsB.Items[0]
 
 	By("environment is ready")
+	// Give 1s for wg setup
+	time.Sleep(time.Second)
 	Eventually(func() error {
 		return InterceptGomegaFailure(func() {
 			// Ping in pod A
@@ -86,6 +94,10 @@ var _ = BeforeSuite(func() {
 			Eventually(pingB2s).Should(gexec.Exit(0))
 		})
 	}, executableTimeout, pollingInterval).Should(Succeed())
+	pathToCLI, err = gexec.Build("github.com/ezh/wireguard-grpc/cmd", "-race")
+	Expect(err).ShouldNot(HaveOccurred())
+	By(fmt.Sprintf("CLI is ready at %s", pathToCLI))
+
 })
 
 var _ = AfterEach(func() {

@@ -11,7 +11,7 @@ import (
 	"github.com/onsi/gomega/gexec"
 )
 
-var _ = Describe("Run Local Integration Tests", func() {
+var _ = Describe("Local Integration Tests", func() {
 	It("Test CLI -h", func() {
 		var stderr, stdout bytes.Buffer
 		command := exec.Command(pathToCLI, "-h")
