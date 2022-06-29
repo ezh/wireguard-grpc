@@ -6,15 +6,15 @@ import (
 )
 
 type Exec struct {
-	exec.Executable
+	exec.Executor
 }
 
 func New(rawCmd string) *Exec {
-	return &Exec{Executable: exec.New(rawCmd)}
+	return &Exec{Executor: exec.New(rawCmd)}
 }
 
 func (exe *Exec) Verify(l *logr.Logger) bool {
-	out, err := exe.RunCombined("-h")
+	out, err := exe.RunCombined(l, "-h")
 	if err != nil {
 		l.Error(err, "wg-quick failed", "output", out)
 		return false

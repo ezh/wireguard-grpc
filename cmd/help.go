@@ -15,7 +15,7 @@ func help(rootCmd *cobra.Command, orig func(*cobra.Command, []string)) func(*cob
 		orig(cmd, output)
 		if cmd == rootCmd {
 			fmt.Fprintln(cmd.OutOrStdout())
-			help, _ := cleanenv.GetDescription(&config.Config{}, nil)
+			help, _ := cleanenv.GetDescription(config.ReadConfig(), nil)
 			fmt.Fprintln(cmd.OutOrStdout(), help)
 		}
 	}

@@ -17,3 +17,4 @@ package wireguardgrpc
 //go:generate go install github.com/bufbuild/buf/cmd/buf@v1.5.0
 //go:generate go install github.com/bufbuild/buf/cmd/protoc-gen-buf-breaking@v1.5.0
 //go:generate go install github.com/bufbuild/buf/cmd/protoc-gen-buf-lint@v1.5.0
+//go:generate go install github.com/golang/mock/mockgen@v1.6.0

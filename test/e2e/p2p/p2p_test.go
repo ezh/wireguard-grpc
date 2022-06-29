@@ -6,6 +6,7 @@ package p2p_test
 import (
 	"bytes"
 	"fmt"
+	"os"
 	"os/exec"
 
 	. "github.com/onsi/ginkgo/v2"
@@ -24,8 +25,14 @@ var _ = Describe("P2P", func() {
 		Expect(stderr.String()).To(BeEmpty())
 		Expect(stdout.String()).To(ContainSubstring("wireguard-grpc is a wireguard GRPC API"))
 	})
-	It("Test API behavior 2", func() {
-		Expect(true).To(BeTrue())
+	FIt("Test API behavior 2", func() {
+		var stderr, stdout bytes.Buffer
+		command := exec.Command(pathToCLI, "-h")
+		command.Env = os.Environ()
+		command.Env = append(command.Env, "WG_EXE=false")
+		session, err := gexec.Start(command, &stdout, &stderr)
+		Expect(err).ShouldNot(HaveOccurred())
+		Eventually(session, executableTimeout).Should(gexec.Exit(0))
 	})
 	It("Test API behavior 3", func() {
 		Expect(false).To(BeTrue())

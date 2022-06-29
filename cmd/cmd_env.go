@@ -1,17 +1,14 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/ezh/wireguard-grpc/config"
-	"github.com/ilyakaznacheev/cleanenv"
+	"github.com/ezh/wireguard-grpc/pkg/app"
 	"github.com/spf13/cobra"
 )
 
 var envCmd = &cobra.Command{
-	Run: func(*cobra.Command, []string) {
-		help, _ := cleanenv.GetDescription(&config.Config{}, nil)
-		fmt.Println(help) // nolint:forbidigo
+	RunE: func(cmd *cobra.Command, args []string) error {
+		return app.RunEnv(config.ReadConfig(), cmd.OutOrStdout())
 	},
 	Short: "Prints environment variables.",
 	Use:   "env",
