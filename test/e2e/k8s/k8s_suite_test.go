@@ -41,7 +41,7 @@ func getPodCmd(pod v1.Pod, cmd string) string {
 	return fmt.Sprintf("kubectl exec -n %s %s -- %s", kubeTest.Namespace, pod.Name, cmd)
 }
 
-var _ = BeforeSuite(func() {
+var _ = SynchronizedBeforeSuite(func() []byte {
 	var err error
 	By("bootstrapping test environment")
 	kubeTest, err = kube.NewTest(logger.Debug)
@@ -97,8 +97,8 @@ var _ = BeforeSuite(func() {
 	pathToCLI, err = gexec.Build("github.com/ezh/wireguard-grpc/cmd", "-race")
 	Expect(err).ShouldNot(HaveOccurred())
 	By(fmt.Sprintf("CLI is ready at %s", pathToCLI))
-
-})
+	return nil
+}, func([]byte) {})
 
 var _ = AfterEach(func() {
 	if DEBUG && CurrentSpecReport().Failed() {
@@ -106,16 +106,17 @@ var _ = AfterEach(func() {
 	}
 })
 
-var _ = AfterSuite(func() {
-	if kubeTest != nil {
-		kubeTest.Close()
-	}
-	gexec.KillAndWait()
-	// Debug github.com/ezh/wireguard-grpc/cmd
-	if !DEBUG && (kubeTest == nil || !kubeTest.Failed()) {
-		gexec.CleanupBuildArtifacts()
-	}
-})
+var _ = SynchronizedAfterSuite(
+	func() {
+		if kubeTest != nil {
+			kubeTest.Close()
+		}
+		gexec.KillAndWait()
+		// Debug github.com/ezh/wireguard-grpc/cmd
+		if !DEBUG && (kubeTest == nil || !kubeTest.Failed()) {
+			gexec.CleanupBuildArtifacts()
+		}
+	}, func() {})
 
 func TestP2p(t *testing.T) {
 	RegisterFailHandler(Fail)
