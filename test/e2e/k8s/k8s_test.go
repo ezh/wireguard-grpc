@@ -15,9 +15,9 @@ import (
 )
 
 var _ = Describe("Kubernetes Integration Tests", func() {
-	FIt("Test CLI diag", func() {
+	It("Test CLI diag", func() {
 		var stderr, stdout bytes.Buffer
-		command := exec.Command(pathToCLI, "diag")
+		command := exec.Command(pathToCLI, "diag", "-v")
 		command.Env = os.Environ()
 		command.Env = append(command.Env, fmt.Sprintf("WG_EXE=%s", getPodCmd(podA, "wg")))
 		command.Env = append(command.Env, fmt.Sprintf("WGQUICK_EXE=%s", getPodCmd(podA, "wg-quick")))
@@ -27,7 +27,7 @@ var _ = Describe("Kubernetes Integration Tests", func() {
 		fmt.Fprintf(GinkgoWriter, "STDOUT:\n%s\n", stdout.String())
 		fmt.Fprintf(GinkgoWriter, "STDERR:\n%s\n", stderr.String())
 	})
-	It("Test API behavior 3", func() {
+	It("List wireguard settings", func() {
 		Expect(false).To(BeTrue())
 	})
 })
