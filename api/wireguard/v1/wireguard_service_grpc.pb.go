@@ -24,6 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type WireGuardServiceClient interface {
 	Ping(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	Dump(ctx context.Context, in *DumpRequest, opts ...grpc.CallOption) (*DumpResponse, error)
 }
 
 type wireGuardServiceClient struct {
@@ -43,11 +44,21 @@ func (c *wireGuardServiceClient) Ping(ctx context.Context, in *emptypb.Empty, op
 	return out, nil
 }
 
+func (c *wireGuardServiceClient) Dump(ctx context.Context, in *DumpRequest, opts ...grpc.CallOption) (*DumpResponse, error) {
+	out := new(DumpResponse)
+	err := c.cc.Invoke(ctx, "/wireguard.v1.WireGuardService/Dump", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // WireGuardServiceServer is the server API for WireGuardService service.
 // All implementations must embed UnimplementedWireGuardServiceServer
 // for forward compatibility
 type WireGuardServiceServer interface {
 	Ping(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
+	Dump(context.Context, *DumpRequest) (*DumpResponse, error)
 	mustEmbedUnimplementedWireGuardServiceServer()
 }
 
@@ -57,6 +68,9 @@ type UnimplementedWireGuardServiceServer struct {
 
 func (UnimplementedWireGuardServiceServer) Ping(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Ping not implemented")
+}
+func (UnimplementedWireGuardServiceServer) Dump(context.Context, *DumpRequest) (*DumpResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Dump not implemented")
 }
 func (UnimplementedWireGuardServiceServer) mustEmbedUnimplementedWireGuardServiceServer() {}
 
@@ -89,6 +103,24 @@ func _WireGuardService_Ping_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _WireGuardService_Dump_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DumpRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WireGuardServiceServer).Dump(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/wireguard.v1.WireGuardService/Dump",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WireGuardServiceServer).Dump(ctx, req.(*DumpRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // WireGuardService_ServiceDesc is the grpc.ServiceDesc for WireGuardService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -99,6 +131,10 @@ var WireGuardService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Ping",
 			Handler:    _WireGuardService_Ping_Handler,
+		},
+		{
+			MethodName: "Dump",
+			Handler:    _WireGuardService_Dump_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
