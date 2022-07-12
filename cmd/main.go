@@ -63,6 +63,7 @@ func parsePersistentFlags(cmd *cobra.Command, cfg *config.Config) (*persistentFl
 func main() {
 	rootCmd.AddCommand(envCmd)
 	rootCmd.AddCommand(diagCmd)
+	rootCmd.AddCommand(serverCmd)
 	rootCmd.PersistentFlags().BoolP("quiet", "q", false, "silences all output; takes precedence over any verbose setting")
 	rootCmd.PersistentFlags().CountP("verbose", "v", "verbosity. Set this flag multiple times for more verbosity")
 	rootCmd.PersistentFlags().StringP("wireguard", "w", "wg", "wireguard executable file")

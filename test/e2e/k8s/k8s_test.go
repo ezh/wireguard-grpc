@@ -27,7 +27,4 @@ var _ = Describe("Kubernetes Integration Tests", func() {
 		fmt.Fprintf(GinkgoWriter, "STDOUT:\n%s\n", stdout.String())
 		fmt.Fprintf(GinkgoWriter, "STDERR:\n%s\n", stderr.String())
 	})
-	It("List wireguard settings", func() {
-		Expect(false).To(BeTrue())
-	})
 })

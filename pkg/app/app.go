@@ -1,10 +1,10 @@
 package app
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"io"
-	"log"
 	"net"
 
 	wireguardv1 "github.com/ezh/wireguard-grpc/api/wireguard/v1"
@@ -18,41 +18,59 @@ import (
 	"google.golang.org/grpc/reflection"
 )
 
-// Run starts application
-func Run(l *logr.Logger, cfg *config.Config) error {
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", cfg.Port))
-	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
-	}
-	var opts []grpc.ServerOption
-	grpcServer := grpc.NewServer(opts...)
-	grpcService := server.GRPC{
+type App struct {
+	l       *logr.Logger
+	cfg     *config.Config
+	WG      *wg.Exec
+	WGQuick *wgquick.Exec
+}
+
+func New(l *logr.Logger, cfg *config.Config) *App {
+	return &App{
+		l:       l,
+		cfg:     cfg,
 		WG:      wg.New(cfg.WgExecutable),
 		WGQuick: wgquick.New(cfg.WgQuickExecutable),
 	}
-	if !grpcService.WG.Verify(l) {
+}
+
+// Run starts application
+func (app *App) Run(ctx context.Context, lis net.Listener) error {
+	var opts []grpc.ServerOption
+
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
+
+	grpcServer := grpc.NewServer(opts...)
+	grpcService := server.New(app.WG, app.WGQuick, app.l)
+	if !grpcService.WG.Verify(app.l) {
 		return errors.New("wg executable is broken")
 	}
-	if !grpcService.WGQuick.Verify(l) {
+	if !grpcService.WGQuick.Verify(app.l) {
 		return errors.New("wg-quick executable is broken")
 	}
 
-	wireguardv1.RegisterWireGuardServiceServer(grpcServer, &grpcService)
+	wireguardv1.RegisterWireGuardServiceServer(grpcServer, grpcService)
 	reflection.Register(grpcServer)
-	l.V(0).Info("GRPC listen", "port", cfg.Port)
+	app.l.V(0).Info("GRPC listen", "port", app.cfg.Port)
+	go func() {
+		<-ctx.Done()
+		cancel()
+		grpcServer.GracefulStop()
+	}()
 	return grpcServer.Serve(lis)
 }
 
 // RunDiag runs application diagnostics
-func RunDiag(l *logr.Logger, cfg *config.Config, out io.Writer) error {
-	wq := wgquick.New(cfg.WgQuickExecutable)
-	wqOk := wq.Verify(l)
+func (app *App) RunDiag(out io.Writer) error {
+	wq := app.WGQuick
+	wqOk := wq.Verify(app.l)
 	wqCmd, wqCmdArgs := wq.GetCmd()
 	wqFullCmd := []string{wqCmd}
 	wqFullCmd = append(wqFullCmd, wqCmdArgs...)
 
-	wg := wg.New(cfg.WgExecutable)
-	wgVersion, wgErr := wg.Version(l)
+	wg := app.WG
+	wgVersion, wgErr := wg.Version(app.l)
 	wgCmd, wgCmdArgs := wg.GetCmd()
 	wgFullCmd := []string{wgCmd}
 	wgFullCmd = append(wgFullCmd, wgCmdArgs...)

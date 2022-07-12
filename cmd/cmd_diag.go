@@ -27,5 +27,5 @@ func diagRunE(cmd *cobra.Command, args []string) error {
 		cfg.WgQuickExecutable = flags.wqCmd
 	}
 
-	return app.RunDiag(flags.l, cfg, cmd.OutOrStdout())
+	return app.New(flags.l, cfg).RunDiag(cmd.OutOrStdout())
 }

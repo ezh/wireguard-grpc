@@ -16,6 +16,7 @@ require (
 	github.com/spf13/cobra v1.5.0
 	github.com/stretchr/testify v1.7.1
 	go.uber.org/zap v1.21.0
+	golang.org/x/exp v0.0.0-20220706164943-b4a6d9510983
 	golang.zx2c4.com/wireguard/wgctrl v0.0.0-20220504211119-3d4a969bb56b
 	google.golang.org/grpc v1.47.0
 	google.golang.org/protobuf v1.28.0

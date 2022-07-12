@@ -1,6 +1,8 @@
 package wgquick
 
 import (
+	"strings"
+
 	"github.com/ezh/wireguard-grpc/pkg/exec"
 	"github.com/go-logr/logr"
 )
@@ -14,9 +16,9 @@ func New(rawCmd string) *Exec {
 }
 
 func (exe *Exec) Verify(l *logr.Logger) bool {
-	out, err := exe.RunCombined(l, "-h")
-	if err != nil {
-		l.Error(err, "wg-quick failed", "output", out)
+	stdout, stderr, err := exe.Run(l, "-h")
+	if err != nil || !strings.HasPrefix(stderr, "Usage: wg-quick") {
+		l.Error(err, "wg-quick failed", "stdout", stdout, "stderr", stderr)
 		return false
 	}
 	return true

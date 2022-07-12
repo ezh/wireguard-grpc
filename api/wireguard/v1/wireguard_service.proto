@@ -21,9 +21,9 @@ message InterfaceConfig {
 // See: https://pkg.go.dev/golang.zx2c4.com/wireguard/wgctrl/wgtypes#PeerConfig
 message PeerConfig {
   // Public-key base64
-  string public_key = 1;
+  bytes public_key = 1;
   // Preshared-key base64
-  string preshared_key = 2;
+  bytes preshared_key = 2;
   // Peer IP
   string endpoint_ip = 3 [ (wireguard_options).type = TYPE_IP ];
   // Peer UDP port
@@ -31,9 +31,9 @@ message PeerConfig {
       [ (wireguard_options).int_range = {minimum : 0 maximum : 65535} ];
   // Keepalive interval (sec)
   uint32 persistent_keepalive = 5;
-  uint64 last_handshake_time = 6;
-  uint64 receive_bytes = 7;
-  uint64 transmit_bytes = 8;
+  int64 last_handshake_time = 6;
+  int64 receive_bytes = 7;
+  int64 transmit_bytes = 8;
   // Allowed IPs
   repeated string allowed_ips = 9 [ (wireguard_options).type = TYPE_IP ];
   // Flags
@@ -41,7 +41,7 @@ message PeerConfig {
   uint32 flags = 10;
 }
 
-message DumpRequest { repeated string wg_if_name = 1; }
+message DumpRequest { repeated string wg_if_names = 1; }
 
 message DumpResponse { repeated InterfaceConfig interfaces = 1; }
 

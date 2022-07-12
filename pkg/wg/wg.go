@@ -11,6 +11,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/ezh/wireguard-grpc/pkg/exec"
+	"github.com/ezh/wireguard-grpc/pkg/utilities"
 	"github.com/go-logr/logr"
 	"golang.zx2c4.com/wireguard/wgctrl/wgtypes"
 )
@@ -29,9 +30,9 @@ func New(rawCmd string) *Exec {
 }
 
 func (exe *Exec) Verify(l *logr.Logger) bool {
-	out, err := exe.RunCombined(l, "show")
-	if err != nil {
-		l.Error(err, "wg failed", "output", out)
+	stdout, stderr, err := exe.Run(l, "show")
+	if err != nil || len(stderr) > 0 {
+		l.Error(err, "wg failed", "stdout", stdout, "stderr", stderr)
 		return false
 	}
 	return true
@@ -101,7 +102,7 @@ func (exe *Exec) Dump(l *logr.Logger) ([]*wgtypes.Device, error) {
 			if err != nil {
 				return nil, errors.Wrapf(err, "%v: EndpointAddr=%s", ErrValueParse, parts[3])
 			}
-			allowedIPs, err := parseAllowedIPs(parts[4])
+			allowedIPs, err := utilities.StringToIPNetSlice(parts[4])
 			if err != nil {
 				return nil, errors.Wrapf(err, "%v: AllowedIPs=%v", ErrValueParse, parts[4])
 			}
@@ -177,18 +178,4 @@ func parsePersistentKeepalive(s string) (time.Duration, error) {
 	}
 
 	return time.Duration(persistentKeepalive * int64(time.Second)), err
-}
-
-func parseAllowedIPs(s string) ([]net.IPNet, error) {
-	stringIPs := strings.Split(s, ",")
-	parsedIPs := make([]net.IPNet, len(stringIPs))
-	for i, stringIP := range stringIPs {
-		stringIP := strings.TrimSpace(stringIP)
-		_, parsedIP, err := net.ParseCIDR(stringIP)
-		if err != nil {
-			return parsedIPs, err
-		}
-		parsedIPs[i] = *parsedIP
-	}
-	return parsedIPs, nil
 }

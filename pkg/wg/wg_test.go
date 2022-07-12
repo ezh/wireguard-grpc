@@ -61,7 +61,7 @@ var _ = Describe("Test WG package", func() {
 		var exerr *osExec.ExitError
 
 		os.Setenv("WG_EXE", "false")
-		err := app.RunDiag(logger, config.ReadConfig(), GinkgoWriter)
+		err := app.New(logger, config.ReadConfig()).RunDiag(GinkgoWriter)
 		Expect(err).To(BeAssignableToTypeOf(&osExec.ExitError{}))
 		if errors.As(err, &exerr) {
 			Expect(exerr.ExitCode()).To(Equal(1))

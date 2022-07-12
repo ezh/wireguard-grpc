@@ -2,7 +2,6 @@ package exec
 
 import (
 	"bytes"
-	"fmt"
 	"os/exec"
 	"strings"
 
@@ -25,7 +24,7 @@ var _ Executor = (*Executable)(nil)
 func New(rawCmd string) *Executable {
 	args := strings.Fields(rawCmd)
 	if len(args) == 0 {
-		panic(fmt.Errorf("unable to create Executable for '%s'", rawCmd))
+		return &Executable{}
 	}
 	return &Executable{
 		Cmd:     args[0],
