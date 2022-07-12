@@ -12,7 +12,7 @@ import (
 func NewGinkgoLogger() *logr.Logger {
 	encoder := zapcore.NewJSONEncoder(zap.NewProductionEncoderConfig())
 	core := zapcore.NewCore(encoder, zapcore.AddSync(ginkgo.GinkgoWriter), zap.DebugLevel)
-	zaplog := zap.New(core, zap.AddCaller(), zap.AddStacktrace(zap.DPanicLevel))
+	zaplog := zap.New(core, zap.AddCaller(), zap.AddStacktrace(zap.DPanicLevel), zap.AddCallerSkip(1))
 	logger := zapr.NewLogger(zaplog)
 	return &logger
 }

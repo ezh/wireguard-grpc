@@ -7,10 +7,11 @@ import (
 )
 
 var diagCmd = &cobra.Command{
-	RunE:         diagRunE,
-	Short:        "test wireguard-grpc configuration",
-	SilenceUsage: true,
-	Use:          "diag",
+	RunE:          diagRunE,
+	Short:         "test wireguard-grpc configuration",
+	SilenceUsage:  true,
+	SilenceErrors: true,
+	Use:           "diag",
 }
 
 func diagRunE(cmd *cobra.Command, args []string) error {
@@ -20,6 +21,8 @@ func diagRunE(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
+	app.RegisterLogger(flags.l)
+
 	if flags.wgCmd != "" {
 		cfg.WgExecutable = flags.wgCmd
 	}
@@ -27,5 +30,5 @@ func diagRunE(cmd *cobra.Command, args []string) error {
 		cfg.WgQuickExecutable = flags.wqCmd
 	}
 
-	return app.New(flags.l, cfg).RunDiag(cmd.OutOrStdout())
+	return app.New(cfg).RunDiag(cmd.OutOrStdout())
 }

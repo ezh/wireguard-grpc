@@ -10,9 +10,9 @@ import (
 
 	"github.com/pkg/errors"
 
+	"github.com/ezh/wireguard-grpc/internal/l"
 	"github.com/ezh/wireguard-grpc/pkg/exec"
 	"github.com/ezh/wireguard-grpc/pkg/utilities"
-	"github.com/go-logr/logr"
 	"golang.zx2c4.com/wireguard/wgctrl/wgtypes"
 )
 
@@ -29,8 +29,8 @@ func New(rawCmd string) *Exec {
 	return &Exec{Executor: exec.New(rawCmd)}
 }
 
-func (exe *Exec) Verify(l *logr.Logger) bool {
-	stdout, stderr, err := exe.Run(l, "show")
+func (exe *Exec) Verify() bool {
+	stdout, stderr, err := exe.Run("show")
 	if err != nil || len(stderr) > 0 {
 		l.Error(err, "wg failed", "stdout", stdout, "stderr", stderr)
 		return false
@@ -38,8 +38,8 @@ func (exe *Exec) Verify(l *logr.Logger) bool {
 	return true
 }
 
-func (exe *Exec) Version(l *logr.Logger) (string, error) {
-	stdout, _, err := exe.Run(l, "-v")
+func (exe *Exec) Version() (string, error) {
+	stdout, _, err := exe.Run("-v")
 	if err != nil {
 		return "", err
 	}
@@ -51,11 +51,11 @@ func (exe *Exec) Version(l *logr.Logger) (string, error) {
 	return version, nil
 }
 
-func (exe *Exec) Dump(l *logr.Logger) ([]*wgtypes.Device, error) {
+func (exe *Exec) Dump() ([]*wgtypes.Device, error) {
 	var devices []*wgtypes.Device
 	var device *wgtypes.Device
 
-	stdout, _, err := exe.Run(l, "show", "all", "dump")
+	stdout, _, err := exe.Run("show", "all", "dump")
 	if err != nil {
 		return nil, err
 	}

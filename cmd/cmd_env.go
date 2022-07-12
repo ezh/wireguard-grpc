@@ -10,6 +10,7 @@ var envCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return app.RunEnv(config.ReadConfig(), cmd.OutOrStdout())
 	},
-	Short: "Prints environment variables.",
-	Use:   "env",
+	Short:         "Prints environment variables.",
+	Use:           "env",
+	SilenceErrors: true,
 }

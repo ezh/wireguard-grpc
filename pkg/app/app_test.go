@@ -38,14 +38,14 @@ var _ = Describe("App", func() {
 		ctx, cancel := context.WithCancel(context.Background())
 		defer cancel()
 		lis := utilities.NewPipeListener()
-		app := app.New(logger, &config.Config{})
+		app := app.New(&config.Config{})
 		app.WG.Executor = mockExecutor
 		app.WGQuick.Executor = mockExecutor
-		mockExecutor.EXPECT().Run(logger, "show").
+		mockExecutor.EXPECT().Run("show").
 			Return("wg stdout text", "", nil).Times(1)
-		mockExecutor.EXPECT().Run(logger, "-h").
+		mockExecutor.EXPECT().Run("-h").
 			Return("", "Usage: wg-quick [ up | down | save | strip ] [ CONFIG_FILE | INTERFACE ]", nil).Times(1)
-		mockExecutor.EXPECT().Run(logger, "show", "all", "dump").
+		mockExecutor.EXPECT().Run("show", "all", "dump").
 			Return(wgDumpOutputExample, "", nil).Times(1)
 
 		// Server

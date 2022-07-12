@@ -1,11 +1,13 @@
 package main
 
 import (
-	"log"
+	"os"
 
 	"github.com/ezh/wireguard-grpc/config"
-	"github.com/ezh/wireguard-grpc/internal/logger/zap"
+	"github.com/ezh/wireguard-grpc/internal/l"
+	"github.com/ezh/wireguard-grpc/internal/l/zap"
 	"github.com/ezh/wireguard-grpc/pkg/logger"
+
 	"github.com/go-logr/logr"
 	"github.com/spf13/cobra"
 )
@@ -21,9 +23,9 @@ func newLogger(rawLogLevel string, verbosity int) (logr.Logger, error) {
 }
 
 type persistentFlags struct {
+	l     *logr.Logger
 	wgCmd string
 	wqCmd string
-	l     *logr.Logger
 }
 
 func parsePersistentFlags(cmd *cobra.Command, cfg *config.Config) (*persistentFlags, error) {
@@ -70,6 +72,7 @@ func main() {
 	rootCmd.SetHelpFunc(helpFn)
 
 	if err := rootCmd.Execute(); err != nil {
-		log.Fatal(err)
+		l.Error(err, "application error")
+		os.Exit(1)
 	}
 }

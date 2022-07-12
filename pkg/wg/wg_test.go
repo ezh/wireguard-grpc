@@ -43,25 +43,25 @@ var _ = Describe("Test WG package", func() {
 	Specify("Test Version behavior", func() {
 		wg := wg.New("wg")
 		wg.Executor = mockExecutor
-		mockExecutor.EXPECT().Run(logger, "-v").
+		mockExecutor.EXPECT().Run("-v").
 			Return(wgOutputExample, "", nil).Times(1)
-		version, err := wg.Version(logger)
+		version, err := wg.Version()
 		Expect(err).To(Succeed())
 		Expect(version).To(Equal(wgVersion))
 	})
 	Specify("Test Version behavior with broken wg output", func() {
 		wg := wg.New("wg")
 		wg.Executor = mockExecutor
-		mockExecutor.EXPECT().Run(logger, "-v").
+		mockExecutor.EXPECT().Run("-v").
 			Return("wireguard-toolsv1.0.20210914 ", "", errors.New("unable to get wg version")).Times(1)
-		_, err := wg.Version(logger)
+		_, err := wg.Version()
 		Expect(err).ToNot(Succeed())
 	})
 	Specify("Test RunDiag returns exit code 1 for broken wg", func() {
 		var exerr *osExec.ExitError
 
 		os.Setenv("WG_EXE", "false")
-		err := app.New(logger, config.ReadConfig()).RunDiag(GinkgoWriter)
+		err := app.New(config.ReadConfig()).RunDiag(GinkgoWriter)
 		Expect(err).To(BeAssignableToTypeOf(&osExec.ExitError{}))
 		if errors.As(err, &exerr) {
 			Expect(exerr.ExitCode()).To(Equal(1))
@@ -70,9 +70,9 @@ var _ = Describe("Test WG package", func() {
 	Specify("Test Dump behavior", func() { // nolint:dupl
 		wg := wg.New("wg")
 		wg.Executor = mockExecutor
-		mockExecutor.EXPECT().Run(logger, "show", "all", "dump").
+		mockExecutor.EXPECT().Run("show", "all", "dump").
 			Return(wgDumpOutputExample1, "", nil).Times(1)
-		devices, err := wg.Dump(logger)
+		devices, err := wg.Dump()
 		Expect(err).To(Succeed())
 		Expect(devices).Should(HaveLen(1))
 		Expect(devices[0].PrivateKey.String()).To(Equal("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="))
@@ -96,9 +96,9 @@ var _ = Describe("Test WG package", func() {
 	Specify("Test Dump behavior with multiple allowed IPs", func() { // nolint:dupl
 		wg := wg.New("wg")
 		wg.Executor = mockExecutor
-		mockExecutor.EXPECT().Run(logger, "show", "all", "dump").
+		mockExecutor.EXPECT().Run("show", "all", "dump").
 			Return(wgDumpOutputExample2, "", nil).Times(1)
-		devices, err := wg.Dump(logger)
+		devices, err := wg.Dump()
 		Expect(err).To(Succeed())
 		Expect(devices).Should(HaveLen(1))
 		Expect(devices[0].PrivateKey.String()).To(Equal("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="))

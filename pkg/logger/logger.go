@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/go-logr/logr"
+	"go.uber.org/zap"
 )
 
 // verbosity level
@@ -55,5 +56,5 @@ func NewLogger(logBuilder LogBuilder, rawLogLevel string, verbosity int) (logr.L
 		}
 	}
 	logLevel := ParseLogLevel(rawLogLevel)
-	return logBuilder(LogLevel(int(logLevel) + verbosity))
+	return logBuilder(LogLevel(int(logLevel)+verbosity), WithZapOptions(zap.AddCallerSkip(1)))
 }

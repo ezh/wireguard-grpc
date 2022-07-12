@@ -14,7 +14,7 @@ var _ = Describe("Test Executable Interface", func() {
 		testExec := exec.Executable{
 			Cmd: "bash",
 		}
-		stdout, stderr, err := testExec.Run(logger, "-c", "echo 123")
+		stdout, stderr, err := testExec.Run("-c", "echo 123")
 		Expect(err).To(Succeed())
 		Expect(stdout).To(Equal("123"))
 		Expect(stderr).To(BeEmpty())
@@ -23,7 +23,7 @@ var _ = Describe("Test Executable Interface", func() {
 		testExec := exec.Executable{
 			Cmd: "bash",
 		}
-		out, err := testExec.RunCombined(logger, "-c", "echo 123;echo 321 >&2")
+		out, err := testExec.RunCombined("-c", "echo 123;echo 321 >&2")
 		Expect(err).To(Succeed())
 		Expect(out).To(Equal("123\n321"))
 	})
@@ -32,7 +32,7 @@ var _ = Describe("Test Executable Interface", func() {
 		testExec := exec.Executable{
 			Cmd: "false",
 		}
-		stdout, stderr, err := testExec.Run(logger)
+		stdout, stderr, err := testExec.Run()
 		Expect(err).To(BeAssignableToTypeOf(&osExec.ExitError{}))
 		Expect(stdout).To(BeEmpty())
 		Expect(stderr).To(BeEmpty())

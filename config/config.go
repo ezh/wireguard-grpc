@@ -8,7 +8,7 @@ import (
 
 type Config struct {
 	LogLevel          string `yaml:"loglevel" env:"LOG_LEVEL" env-description:"application log level"`
-	Port              int    `yaml:"port" env:"PORT" env-default:"8081" env-description:"GRPC server port"`
+	Listen            string `yaml:"listen" env:"LISTEN" env-default:"0.0.0.0:8081" env-description:"GRPC server listen address (path or IP:PORT)"` //nolint
 	WgExecutable      string `yaml:"wg" env:"WG_EXE" env-default:"wg" env-description:"wireguard executable"`
 	WgQuickExecutable string `yaml:"wgquick" env:"WGQUICK_EXE" env-default:"wg-quick" env-description:"wg-quick wrapper"`
 }

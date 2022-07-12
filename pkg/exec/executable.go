@@ -5,12 +5,12 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/go-logr/logr"
+	"github.com/ezh/wireguard-grpc/internal/l"
 )
 
 type Executor interface {
-	Run(l *logr.Logger, args ...string) (string, string, error)
-	RunCombined(l *logr.Logger, args ...string) (string, error)
+	Run(args ...string) (string, string, error)
+	RunCombined(args ...string) (string, error)
 	GetCmd() (string, []string)
 }
 
@@ -36,20 +36,20 @@ func (exe *Executable) GetCmd() (string, []string) {
 	return exe.Cmd, exe.CmdArgs
 }
 
-func (exe *Executable) Run(l *logr.Logger, args ...string) (string, string, error) {
+func (exe *Executable) Run(args ...string) (string, string, error) {
 	var stdout, stderr bytes.Buffer
-	err := exe.run(l, &stdout, &stderr, args...)
+	err := exe.run(&stdout, &stderr, args...)
 	return strings.TrimSpace(stdout.String()),
 		strings.TrimSpace(stderr.String()), err
 }
 
-func (exe *Executable) RunCombined(l *logr.Logger, args ...string) (string, error) {
+func (exe *Executable) RunCombined(args ...string) (string, error) {
 	var buf bytes.Buffer
-	err := exe.run(l, &buf, &buf, args...)
+	err := exe.run(&buf, &buf, args...)
 	return strings.TrimSpace(buf.String()), err
 }
 
-func (exe *Executable) run(l *logr.Logger, stdout, stderr *bytes.Buffer, args ...string) error {
+func (exe *Executable) run(stdout, stderr *bytes.Buffer, args ...string) error {
 	var cmd *exec.Cmd
 
 	argsForCmd := make([]string, len(exe.CmdArgs)+len(args))

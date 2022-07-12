@@ -1,28 +1,28 @@
 // Copyright (c) 2020-present Sven Greb <development@svengreb.de>
 // This source code is licensed under the MIT license found in the LICENSE file.
 
-package logger_test
+package l_test
 
 import (
 	"math"
 	"testing"
 
-	"github.com/ezh/wireguard-grpc/internal/logger"
+	"github.com/ezh/wireguard-grpc/internal/l"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestMarshalVerbosity(t *testing.T) {
 	testCases := []struct {
-		v    logger.Verbosity
+		v    l.Verbosity
 		name string
 	}{
-		{logger.DebugVerbosity, logger.VerbosityNameDebug},
-		{logger.InfoVerbosity, logger.VerbosityNameInfo},
-		{logger.SuccessVerbosity, logger.VerbosityNameSuccess},
-		{logger.ErrorVerbosity, logger.VerbosityNameError},
-		{logger.FatalVerbosity, logger.VerbosityNameFatal},
-		{logger.SuppressVerbosity, logger.VerbosityNameSuppress},
-		{logger.WarnVerbosity, logger.VerbosityNameWarn},
+		{l.DebugVerbosity, l.VerbosityNameDebug},
+		{l.InfoVerbosity, l.VerbosityNameInfo},
+		{l.SuccessVerbosity, l.VerbosityNameSuccess},
+		{l.ErrorVerbosity, l.VerbosityNameError},
+		{l.FatalVerbosity, l.VerbosityNameFatal},
+		{l.SuppressVerbosity, l.VerbosityNameSuppress},
+		{l.WarnVerbosity, l.VerbosityNameWarn},
 	}
 
 	for _, tc := range testCases {
@@ -35,27 +35,27 @@ func TestMarshalVerbosity(t *testing.T) {
 }
 
 func TestMarshalVerbosityInvalid(t *testing.T) {
-	vInvalid := logger.Verbosity(math.MaxInt32)
+	vInvalid := l.Verbosity(math.MaxInt32)
 	_, err := vInvalid.MarshalText()
 	assert.NotNilf(t, err, "must fail to marshal invalid verbosity level: %v", err)
 }
 
 func TestParseVerbosity(t *testing.T) {
 	testCases := []struct {
-		v    logger.Verbosity
+		v    l.Verbosity
 		name string
 	}{
-		{logger.DebugVerbosity, logger.VerbosityNameDebug},
-		{logger.InfoVerbosity, logger.VerbosityNameInfo},
-		{logger.SuccessVerbosity, logger.VerbosityNameSuccess},
-		{logger.ErrorVerbosity, logger.VerbosityNameError},
-		{logger.FatalVerbosity, logger.VerbosityNameFatal},
-		{logger.SuppressVerbosity, logger.VerbosityNameSuppress},
-		{logger.WarnVerbosity, logger.VerbosityNameWarn},
+		{l.DebugVerbosity, l.VerbosityNameDebug},
+		{l.InfoVerbosity, l.VerbosityNameInfo},
+		{l.SuccessVerbosity, l.VerbosityNameSuccess},
+		{l.ErrorVerbosity, l.VerbosityNameError},
+		{l.FatalVerbosity, l.VerbosityNameFatal},
+		{l.SuppressVerbosity, l.VerbosityNameSuppress},
+		{l.WarnVerbosity, l.VerbosityNameWarn},
 	}
 
 	for _, tc := range testCases {
-		v, err := logger.ParseVerbosity(tc.name)
+		v, err := l.ParseVerbosity(tc.name)
 		if err != nil {
 			assert.Fail(t, "parsing %q verbosity name: %v", tc.name, err)
 		}
@@ -65,25 +65,25 @@ func TestParseVerbosity(t *testing.T) {
 
 func TestParseVerbosityInvalid(t *testing.T) {
 	vName := "invalid"
-	_, err := logger.ParseVerbosity(vName)
+	_, err := l.ParseVerbosity(vName)
 	assert.NotNilf(t, err, "must fail to parse invalid verbosity level name %q: %v", vName, err)
 }
 
 func TestUnmarshalVerbosity(t *testing.T) {
-	vOld := logger.DebugVerbosity
-	vNew := logger.ErrorVerbosity
+	vOld := l.DebugVerbosity
+	vNew := l.ErrorVerbosity
 	err := vOld.UnmarshalText([]byte(vNew.String()))
-	assert.Nilf(t, err, "unmarshalling verbosity name %q", logger.ErrorVerbosity.String())
+	assert.Nilf(t, err, "unmarshalling verbosity name %q", l.ErrorVerbosity.String())
 	assert.Equalf(t, vOld, vNew, "expected %q, but got %q", vNew, vOld)
 }
 
 func TestUnmarshalVerbosityInvalid(t *testing.T) {
-	v := logger.DebugVerbosity
+	v := l.DebugVerbosity
 	invalidName := "invalid"
 	err := v.UnmarshalText([]byte(invalidName))
 	assert.NotNilf(t, err, "unmarshal error: %v", err)
 }
 
 func TestVerbosityUnknownName(t *testing.T) {
-	assert.Equal(t, logger.Verbosity(math.MaxUint32).String(), logger.VerbosityNameUnknown)
+	assert.Equal(t, l.Verbosity(math.MaxUint32).String(), l.VerbosityNameUnknown)
 }

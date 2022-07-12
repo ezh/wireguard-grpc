@@ -3,7 +3,7 @@ package zap_test
 import (
 	"bytes"
 
-	"github.com/ezh/wireguard-grpc/internal/logger/zap"
+	"github.com/ezh/wireguard-grpc/internal/l/zap"
 	"github.com/ezh/wireguard-grpc/pkg/logger"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"

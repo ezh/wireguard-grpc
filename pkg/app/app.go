@@ -9,6 +9,7 @@ import (
 
 	wireguardv1 "github.com/ezh/wireguard-grpc/api/wireguard/v1"
 	"github.com/ezh/wireguard-grpc/config"
+	"github.com/ezh/wireguard-grpc/internal/l"
 	"github.com/ezh/wireguard-grpc/pkg/server"
 	"github.com/ezh/wireguard-grpc/pkg/wg"
 	wgquick "github.com/ezh/wireguard-grpc/pkg/wg-quick"
@@ -19,19 +20,22 @@ import (
 )
 
 type App struct {
-	l       *logr.Logger
 	cfg     *config.Config
 	WG      *wg.Exec
 	WGQuick *wgquick.Exec
 }
 
-func New(l *logr.Logger, cfg *config.Config) *App {
+func New(cfg *config.Config) *App {
 	return &App{
-		l:       l,
 		cfg:     cfg,
 		WG:      wg.New(cfg.WgExecutable),
 		WGQuick: wgquick.New(cfg.WgQuickExecutable),
 	}
+}
+
+// RegisterLogger registers global logr implementation
+func RegisterLogger(ll *logr.Logger) {
+	l.RegisterLogger(ll)
 }
 
 // Run starts application
@@ -42,17 +46,17 @@ func (app *App) Run(ctx context.Context, lis net.Listener) error {
 	defer cancel()
 
 	grpcServer := grpc.NewServer(opts...)
-	grpcService := server.New(app.WG, app.WGQuick, app.l)
-	if !grpcService.WG.Verify(app.l) {
+	grpcService := server.New(app.WG, app.WGQuick)
+	if !grpcService.WG.Verify() {
 		return errors.New("wg executable is broken")
 	}
-	if !grpcService.WGQuick.Verify(app.l) {
+	if !grpcService.WGQuick.Verify() {
 		return errors.New("wg-quick executable is broken")
 	}
 
 	wireguardv1.RegisterWireGuardServiceServer(grpcServer, grpcService)
 	reflection.Register(grpcServer)
-	app.l.V(0).Info("GRPC listen", "port", app.cfg.Port)
+	l.Info("GRPC listen", "listen", app.cfg.Listen)
 	go func() {
 		<-ctx.Done()
 		cancel()
@@ -64,13 +68,13 @@ func (app *App) Run(ctx context.Context, lis net.Listener) error {
 // RunDiag runs application diagnostics
 func (app *App) RunDiag(out io.Writer) error {
 	wq := app.WGQuick
-	wqOk := wq.Verify(app.l)
+	wqOk := wq.Verify()
 	wqCmd, wqCmdArgs := wq.GetCmd()
 	wqFullCmd := []string{wqCmd}
 	wqFullCmd = append(wqFullCmd, wqCmdArgs...)
 
 	wg := app.WG
-	wgVersion, wgErr := wg.Version(app.l)
+	wgVersion, wgErr := wg.Version()
 	wgCmd, wgCmdArgs := wg.GetCmd()
 	wgFullCmd := []string{wgCmd}
 	wgFullCmd = append(wgFullCmd, wgCmdArgs...)

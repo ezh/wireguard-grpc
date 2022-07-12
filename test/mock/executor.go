@@ -7,7 +7,6 @@ package mock
 import (
 	reflect "reflect"
 
-	logr "github.com/go-logr/logr"
 	gomock "github.com/golang/mock/gomock"
 )
 
@@ -50,9 +49,9 @@ func (mr *MockExecutorMockRecorder) GetCmd() *gomock.Call {
 }
 
 // Run mocks base method.
-func (m *MockExecutor) Run(l *logr.Logger, args ...string) (string, string, error) {
+func (m *MockExecutor) Run(args ...string) (string, string, error) {
 	m.ctrl.T.Helper()
-	varargs := []interface{}{l}
+	varargs := []interface{}{}
 	for _, a := range args {
 		varargs = append(varargs, a)
 	}
@@ -64,16 +63,15 @@ func (m *MockExecutor) Run(l *logr.Logger, args ...string) (string, string, erro
 }
 
 // Run indicates an expected call of Run.
-func (mr *MockExecutorMockRecorder) Run(l interface{}, args ...interface{}) *gomock.Call {
+func (mr *MockExecutorMockRecorder) Run(args ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	varargs := append([]interface{}{l}, args...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Run", reflect.TypeOf((*MockExecutor)(nil).Run), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Run", reflect.TypeOf((*MockExecutor)(nil).Run), args...)
 }
 
 // RunCombined mocks base method.
-func (m *MockExecutor) RunCombined(l *logr.Logger, args ...string) (string, error) {
+func (m *MockExecutor) RunCombined(args ...string) (string, error) {
 	m.ctrl.T.Helper()
-	varargs := []interface{}{l}
+	varargs := []interface{}{}
 	for _, a := range args {
 		varargs = append(varargs, a)
 	}
@@ -84,8 +82,7 @@ func (m *MockExecutor) RunCombined(l *logr.Logger, args ...string) (string, erro
 }
 
 // RunCombined indicates an expected call of RunCombined.
-func (mr *MockExecutorMockRecorder) RunCombined(l interface{}, args ...interface{}) *gomock.Call {
+func (mr *MockExecutorMockRecorder) RunCombined(args ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	varargs := append([]interface{}{l}, args...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RunCombined", reflect.TypeOf((*MockExecutor)(nil).RunCombined), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RunCombined", reflect.TypeOf((*MockExecutor)(nil).RunCombined), args...)
 }

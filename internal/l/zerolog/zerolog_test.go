@@ -6,7 +6,7 @@ import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
-	"github.com/ezh/wireguard-grpc/internal/logger/zerolog"
+	"github.com/ezh/wireguard-grpc/internal/l/zerolog"
 	"github.com/ezh/wireguard-grpc/pkg/logger"
 )
 
