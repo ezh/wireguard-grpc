@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.0 (2022-07-14)
+
+
+### Features
+
+* the 1st release ([313a57b](https://github.com/ezh/wireguard-grpc/commit/313a57ba5648d3537f80e350f3868814ce9b5fd3))
+
 ## [1.2.2](https://github.com/ezh/wireguard-grpc/compare/v1.2.1...v1.2.2) (2022-07-14)
 
 
