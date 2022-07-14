@@ -10,8 +10,20 @@ env:
   PACKAGE: wireguard-grpc
 
 jobs:
+  meta:
+    runs-on: ubuntu-latest
+    outputs:
+      date: ${{ steps.meta.outputs.date }}
+    steps:
+      - name: Prepare release meta
+        id: meta
+        run: |
+          echo "::set-output name=date::$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+
   release-please:
     runs-on: ubuntu-latest
+    needs:
+      - meta
     steps:
       - uses: google-github-actions/release-please-action@v3
         id: release
@@ -51,7 +63,7 @@ jobs:
             if [[ $os == "windows" ]]; then
               output_path="$output_path.exe"
             fi
-            GOOS=$os go build -ldflags "-X main.Version=${{ steps.release.outputs.tag_name }} -X main.Revision=$revision -X main.BuildDate=`date -u +%FT%TZ`" -o $output_path ./cmd/
+            GOOS=$os go build -ldflags "-X 'main.Version=${{ steps.release.outputs.tag_name }}'' -X 'main.Revision=$revision' -X 'main.BuildDate=${{ needs.meta.outputs.date }}'  -X 'main.BuildCommit=${{ github.sha }}'" -o $output_path ./cmd/
           done
         if: ${{ steps.release.outputs.release_created }}
       - name: Upload assets

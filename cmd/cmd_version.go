@@ -20,6 +20,6 @@ var versionCmd = &cobra.Command{
 			git = fmt.Sprintf(" (r%s)", r)
 		}
 
-		fmt.Printf("%s %s%s %s", AppName, Version, git, BuildDate) //nolint:forbidigo
+		fmt.Printf("%s Version: %s%s (%s) built at %s", AppName, Version, git, BuildCommit, BuildDate) //nolint:forbidigo
 	},
 }
