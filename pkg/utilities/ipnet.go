@@ -8,7 +8,7 @@ import (
 
 func StringToIPNetSlice(val string) ([]net.IPNet, error) {
 	val = strings.Trim(val, "[]")
-	// Emtpy string would cause a slice with one (empty) entry
+	// Empty string would cause a slice with one (empty) entry
 	if len(val) == 0 {
 		return []net.IPNet{}, nil
 	}

@@ -17,11 +17,6 @@ var appname = "wireguard-grpc"
 // logBuilder is hard coded type of logger implementation
 var logBuilder = zap.New
 
-// newLogger creates a new logger
-func newLogger(rawLogLevel string, verbosity int) (logr.Logger, error) {
-	return logger.NewLogger(logBuilder, rawLogLevel, verbosity)
-}
-
 type persistentFlags struct {
 	l     *logr.Logger
 	wgCmd string
@@ -50,9 +45,9 @@ func parsePersistentFlags(cmd *cobra.Command, cfg *config.Config) (*persistentFl
 
 	var l logr.Logger
 	if quiet {
-		l, err = newLogger(cfg.LogLevel, -1)
+		l, err = logger.NewLogger(logBuilder, cfg.LogLevel, -1)
 	} else {
-		l, err = newLogger(cfg.LogLevel, verbosity)
+		l, err = logger.NewLogger(logBuilder, cfg.LogLevel, verbosity)
 	}
 	if err != nil {
 		return nil, err
