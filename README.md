@@ -1,3 +1,6 @@
+[![Build Status](https://github.com/ezh/wireguard-grpc/workflows/build/badge.svg)](https://github.com/ezh/wireguard-grpc/actions?query=workflow%3Ago)
+[![Go Report Card](https://goreportcard.com/badge/github.com/ezh/wireguard-grpc)](https://goreportcard.com/report/github.com/ezh/wireguard-grpc)
+
 # Generate
 
 `go generate -v`
