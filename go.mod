@@ -8,7 +8,7 @@ require (
 	github.com/go-logr/stdr v1.2.2
 	github.com/go-logr/zapr v1.2.3
 	github.com/go-logr/zerologr v1.2.2
-	github.com/golang/mock v1.3.1
+	github.com/golang/mock v1.6.0
 	github.com/hashicorp/go-sockaddr v1.0.2
 	github.com/ilyakaznacheev/cleanenv v1.2.6
 	github.com/onsi/ginkgo/v2 v2.1.4
