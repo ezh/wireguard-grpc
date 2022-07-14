@@ -12,7 +12,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var appname = "wireguard-grpc"
+var (
+	AppName  = "wireguard-grpc"
+	Version  = "development"
+	Revision = ""
+)
 
 // logBuilder is hard coded type of logger implementation
 var logBuilder = zap.New
@@ -61,6 +65,7 @@ func main() {
 	rootCmd.AddCommand(envCmd)
 	rootCmd.AddCommand(diagCmd)
 	rootCmd.AddCommand(serverCmd)
+	rootCmd.AddCommand(versionCmd)
 	rootCmd.PersistentFlags().BoolP("quiet", "q", false, "silences all output; takes precedence over any verbose setting")
 	rootCmd.PersistentFlags().CountP("verbose", "v", "verbosity. Set this flag multiple times for more verbosity")
 	rootCmd.PersistentFlags().StringP("wireguard", "w", "wg", "wireguard executable file")

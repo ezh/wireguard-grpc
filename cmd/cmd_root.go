@@ -8,7 +8,7 @@ import (
 
 var rootCmd = &cobra.Command{
 	RunE:          rootRunE,
-	Short:         fmt.Sprintf("%s is a wireguard GRPC API", appname),
+	Short:         fmt.Sprintf("%s is a wireguard GRPC API", AppName),
 	SilenceUsage:  true,
 	SilenceErrors: true,
 }
