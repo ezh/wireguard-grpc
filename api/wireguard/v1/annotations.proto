@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package wireguard.v1;
+
+import "google/protobuf/descriptor.proto";
+
+extend google.protobuf.FieldOptions {
+  // NOTE: used option field index(2000) is in extension index range of
+  // descriptor.proto, but is not registered in protobuf global extension
+  // registry
+  // (https://github.com/protocolbuffers/protobuf/blob/master/docs/options.md)
+  WireGuardOptions wireguard_options = 2000;
+}
+
+message WireGuardOptions {
+  enum Type {
+    TYPE_UNSPECIFIED = 0;
+    TYPE_IP = 1;
+    TYPE_IPV4 = 2;
+    TYPE_IPV6 = 3;
+    TYPE_IP_WITH_MASK = 4;
+    TYPE_IPV4_WITH_MASK = 5;
+    TYPE_IPV6_WITH_MASK = 6;
+    TYPE_IP_OPTIONAL_MASK = 7;
+    TYPE_IPV4_OPTIONAL_MASK = 8;
+    TYPE_IPV6_OPTIONAL_MASK = 9;
+  }
+  Type type = 1;
+
+  message IntRange {
+    int64 minimum = 1;
+    uint64 maximum = 2;
+  }
+  IntRange int_range = 2;
+}

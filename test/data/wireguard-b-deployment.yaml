@@ -1,0 +1,42 @@
+Version: apps/v1
+kind: Deployment
+metadata:
+  name: wireguard-b
+  labels:
+    app: wireguard-b
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wireguard-b
+  template:
+    metadata:
+      name: wireguard-b
+      labels:
+        app: wireguard-b
+    spec:
+      containers:
+        - name: wireguard
+          image: linuxserver/wireguard:latest
+          env:
+            - name: TZ
+              value: America/Central
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+          ports:
+            - containerPort: 51820
+              protocol: UDP
+          securityContext:
+            capabilities:
+              add: ["NET_ADMIN", "SYS_MODULE"]
+          volumeMounts:
+            - name: configuration
+              mountPath: /config/wg0.conf
+              subPath: wireguard.conf
+          resources: {}
+      volumes:
+        - name: configuration
+          configMap:
+            name: wireguard-b
