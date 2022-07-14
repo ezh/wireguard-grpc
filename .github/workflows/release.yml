@@ -51,7 +51,7 @@ jobs:
             if [[ $os == "windows" ]]; then
               output_path="$output_path.exe"
             fi
-            GOOS=$os go build -ldflags "-X '$importpath/cmd.Version=${{ steps.release.outputs.tag_name }}' -X '$importpath/cmd.Revision=$revision'" -o $output_path .
+            GOOS=$os go build -ldflags "-X '$importpath/cmd.Version=${{ steps.release.outputs.tag_name }}' -X '$importpath/cmd.Revision=$revision'" -o $output_path ./cmd/
           done
         if: ${{ steps.release.outputs.release_created }}
       - name: Upload assets
