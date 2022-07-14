@@ -13,9 +13,10 @@ import (
 )
 
 var (
-	AppName  = "wireguard-grpc"
-	Version  = "development"
-	Revision = ""
+	AppName   = "wireguard-grpc"
+	BuildDate = ""
+	Revision  = ""
+	Version   = "development"
 )
 
 // logBuilder is hard coded type of logger implementation
