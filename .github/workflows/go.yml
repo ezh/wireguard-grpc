@@ -24,10 +24,3 @@ jobs:
     - name: Test
       run: go test -v ./...
 
-  fossa-scan:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: fossas/fossa-action@main # Use a specific version if locking is preferred
-        with:
-          api-key: ${{secrets.FOSSAAPIKEY}}
