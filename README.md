@@ -4,7 +4,6 @@
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fezh%2Fwireguard-grpc.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fezh%2Fwireguard-grpc?ref=badge_shield)
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
 
-
 # Quick start
 
 `wireguard-grpc server`
