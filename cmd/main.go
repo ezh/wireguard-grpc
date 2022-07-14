@@ -15,7 +15,7 @@ import (
 var (
 	AppName     = "wireguard-grpc"
 	BuildCommit = "HEAD"
-	BuildDate   = "00:00"
+	BuildDate   = "YYYY-MM-DD HH:SS"
 	Revision    = ""
 	Version     = "development"
 )
