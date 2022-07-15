@@ -69,5 +69,5 @@ func serverRunE(cmd *cobra.Command, args []string) error {
 		}
 	}()
 
-	return app.New(cfg).Run(context.Background(), lis)
+	return app.New(cfg).RunServer(context.Background(), lis)
 }

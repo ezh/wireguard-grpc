@@ -8,7 +8,7 @@ import (
 
 var diagCmd = &cobra.Command{
 	RunE:          diagRunE,
-	Short:         "test wireguard-grpc configuration",
+	Short:         "Test wireguard-grpc configuration.",
 	SilenceUsage:  true,
 	SilenceErrors: true,
 	Use:           "diag",

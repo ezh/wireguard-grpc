@@ -38,8 +38,8 @@ func RegisterLogger(ll *logr.Logger) {
 	l.RegisterLogger(ll)
 }
 
-// Run starts application
-func (app *App) Run(ctx context.Context, lis net.Listener) error {
+// RunServer starts application
+func (app *App) RunServer(ctx context.Context, lis net.Listener) error {
 	var opts []grpc.ServerOption
 
 	ctx, cancel := context.WithCancel(ctx)

@@ -51,7 +51,7 @@ var _ = Describe("App", func() {
 		// Server
 		go func() {
 			defer GinkgoRecover()
-			err := app.Run(ctx, lis)
+			err := app.RunServer(ctx, lis)
 			Expect(err).To(Succeed())
 		}()
 
