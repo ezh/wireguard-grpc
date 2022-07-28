@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/ezh/wireguard-grpc/compare/v1.1.0...v1.2.0) (2022-07-28)
+
+
+### Features
+
+* add tags to NewGinkgoLogger ([4fc0d58](https://github.com/ezh/wireguard-grpc/commit/4fc0d58c5a3958dcc8122b392c68f4fc0a93b8d8))
+
 ## [1.1.0](https://github.com/ezh/wireguard-grpc/compare/v1.0.0...v1.1.0) (2022-07-15)
 
 
