@@ -56,7 +56,7 @@ func (app *App) RunServer(ctx context.Context, lis net.Listener) error {
 
 	wireguardv1.RegisterWireGuardServiceServer(grpcServer, grpcService)
 	reflection.Register(grpcServer)
-	l.Info("GRPC listen", "listen", app.cfg.Listen)
+	l.Info("GRPC listen", "listen", lis.Addr().String())
 	go func() {
 		<-ctx.Done()
 		cancel()
