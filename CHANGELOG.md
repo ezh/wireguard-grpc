@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.1](https://github.com/ezh/wireguard-grpc/compare/v1.3.0...v1.3.1) (2022-07-29)
+
+
+### Bug Fixes
+
+* listen address ([39da6ed](https://github.com/ezh/wireguard-grpc/commit/39da6eddc0f3f6f8e2ebea4bccb37633aa1b7295))
+
 ## [1.3.0](https://github.com/ezh/wireguard-grpc/compare/v1.2.0...v1.3.0) (2022-07-29)
 
 
