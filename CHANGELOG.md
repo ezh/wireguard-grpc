@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/ezh/wireguard-grpc/compare/v1.2.0...v1.3.0) (2022-07-29)
+
+
+### Features
+
+* improve test logger tags ([c9ff8e9](https://github.com/ezh/wireguard-grpc/commit/c9ff8e969e37d6edb3edce3c71d05aa9830ca03b))
+
 ## [1.2.0](https://github.com/ezh/wireguard-grpc/compare/v1.1.0...v1.2.0) (2022-07-28)
 
 
