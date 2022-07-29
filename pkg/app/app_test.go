@@ -1,6 +1,7 @@
 package app_test
 
 import (
+	"bytes"
 	"context"
 	"encoding/base64"
 	"time"
@@ -95,5 +96,27 @@ var _ = Describe("App", func() {
 			To(Equal("GQ+LsM9LFtXYXv+tVXWwWVa2QPexzrEekABPvgKUHRE="))
 		Expect(peer.GetReceiveBytes()).To(BeEquivalentTo(24732))
 		Expect(peer.GetTransmitBytes()).To(BeEquivalentTo(22420))
+	})
+	Specify("Test RunDiag behavior", func() {
+		var out bytes.Buffer
+		app := app.New(&config.Config{})
+		app.WG.Executor = mockExecutor
+		app.WGQuick.Executor = mockExecutor
+		mockExecutor.EXPECT().Run("-h").
+			Return("", "Usage: wg-quick [ up | down | save | strip ] [ CONFIG_FILE | INTERFACE ]", nil).Times(1)
+		mockExecutor.EXPECT().GetCmd().
+			Return("wg-quick", []string{})
+		mockExecutor.EXPECT().Run("-v").
+			Return("wireguard-tools v1.0.20210914 - https://git.zx2c4.com/wireguard-tools/\n", "", nil).Times(1)
+		mockExecutor.EXPECT().GetCmd().
+			Return("wg", []string{})
+
+		Expect(app.RunDiag(&out)).To(Succeed())
+		Expect(out.String()).To(ContainSubstring("wg version: v1.0.20210914"))
+	})
+	Specify("Test RunEnv behavior", func() {
+		var out bytes.Buffer
+		Expect(app.RunEnv(&config.Config{}, &out)).To(Succeed())
+		Expect(out.String()).To(ContainSubstring("default \"0.0.0.0:8081\""))
 	})
 })
