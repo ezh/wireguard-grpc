@@ -113,7 +113,9 @@ func TestUnblocking(t *testing.T) {
 	}
 }
 
-func testUnblocking(t *testing.T, blockFunc func(*utilities.PipeListener, chan struct{}) error, unblockFunc func(*utilities.PipeListener) error, blockFuncShouldError bool) {
+func testUnblocking(t *testing.T, blockFunc func(*utilities.PipeListener, chan struct{}) error,
+	unblockFunc func(*utilities.PipeListener) error, blockFuncShouldError bool) {
+	t.Helper()
 	pl := utilities.NewPipeListener()
 	dialFinished := make(chan struct{})
 
