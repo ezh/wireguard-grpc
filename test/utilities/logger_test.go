@@ -13,8 +13,8 @@ var _ = Describe("Logger", func() {
 	Specify("NewGinkgoLogger tags", func() {
 		var buf bytes.Buffer
 		GinkgoWriter.TeeTo(&buf)
-		l := utilities.NewGinkgoLogger("abc", "def")
+		l := utilities.NewGinkgoLogger("abc", "def", "123", "321")
 		l.Info("123")
-		Expect(buf.String()).To(ContainSubstring(`"tags":["abc","def"]`))
+		Expect(buf.String()).To(ContainSubstring(`"abc":"def","123":"321"`))
 	})
 })
