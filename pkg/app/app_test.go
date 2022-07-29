@@ -114,4 +114,9 @@ var _ = Describe("App", func() {
 		Expect(app.RunDiag(&out)).To(Succeed())
 		Expect(out.String()).To(ContainSubstring("wg version: v1.0.20210914"))
 	})
+	Specify("Test RunEnv behavior", func() {
+		var out bytes.Buffer
+		Expect(app.RunEnv(&config.Config{}, &out)).To(Succeed())
+		Expect(out.String()).To(ContainSubstring("default \"0.0.0.0:8081\""))
+	})
 })
